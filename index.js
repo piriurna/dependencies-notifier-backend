@@ -2,7 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const app = require('./src/app');
 
-const PORT = 3000;
+const PORT = proccess.env.PORT || 3000;
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -17,7 +17,7 @@ async function startServer() {
 
         // Start the Express server
         app.listen(PORT, () => {
-            console.log(`Server is running on http://localhost:${PORT}`);
+            console.log(`Server is running on port ${PORT}`);
         });
 
     } catch (error) {
