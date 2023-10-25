@@ -2,12 +2,15 @@ const express = require('express');
 const router = express.Router();
 const Project = require('../models/project');
 const { updateProjectDependencies } = require('../services/dependencies');  // Make sure to export the function and adjust the path
+const User = require('../models/user');
 
 // Create a New Project
 router.post('/create', async (req, res) => {
     try {
         const { projectName, userId } = req.body;
-        const newProject = new Project({ projectName, owners: [{ user: userId }] });
+        const user = await User.findOne({ userId })
+        console.log(user)
+        const newProject = new Project({ projectName, owners: [user] });
         await newProject.save();
         res.status(201).json({ message: 'Project created successfully.', projectId: newProject._id });
     } catch (error) {
