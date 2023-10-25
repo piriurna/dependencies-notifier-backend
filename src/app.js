@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 
 const userRoutes = require('./routes/users');
 const dependenciesRoutes = require('./routes/dependencies');
+const projectRoutes = require('./routes/projects')
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(bodyParser.json()); // Parses incoming requests with JSON payloads
 
 // Routes
 app.use('/users', userRoutes);
+app.use('/projects', projectRoutes);
 app.use('/dependencies', dependenciesRoutes);
 
 // Error handling middleware
