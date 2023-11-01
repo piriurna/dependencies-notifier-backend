@@ -72,5 +72,27 @@ router.get('/:projectId/dependencies', async (req, res) => {
   }
 });
 
+// Get all projects for a specific user
+router.get('/user/:userId', async (req, res) => {
+    try {
+        const user = await User.findOne({ userId: req.params.userId }).populate('projects.dependency');
+        
+        if (user) {
+            // Get the IDs of all projects associated with this user
+            const projectIds = user.projects.map(proj => proj.dependency);
+  
+            // Fetch the actual project details
+            const projects = await Project.find({ '_id': { $in: projectIds } });
+            
+            res.status(200).json(projects);
+        } else {
+            res.status(404).send({ error: 'User not found.' });
+        }
+    } catch (error) {
+        console.error('Error fetching projects for user:', error);
+        res.status(500).send({ error: 'Failed to fetch projects for user.', details: error.message });
+    }
+  });
+
 
 module.exports = router;
