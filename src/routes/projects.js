@@ -8,16 +8,24 @@ const User = require('../models/user');
 router.post('/create', async (req, res) => {
     try {
         const { projectName, userId } = req.body;
-        const user = await User.findOne({ userId })
-        console.log(user)
+        const user = await User.findOne({ userId });
+        if (!user) {
+            return res.status(404).send({ error: 'User not found.' });
+        }
         const newProject = new Project({ projectName, owners: [user] });
         await newProject.save();
+        
+        // Add the new project reference to the user's projects list
+        user.projects.push({ dependency: newProject._id });
+        await user.save();
+        
         res.status(201).json({ message: 'Project created successfully.', projectId: newProject._id });
     } catch (error) {
         console.error('Error creating project:', error);
         res.status(500).send({ error: 'Failed to create project.', details: error.message });
     }
 });
+
 
 // Get Project by ID
 router.get('/:projectId', async (req, res) => {
