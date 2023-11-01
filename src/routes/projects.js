@@ -84,7 +84,7 @@ router.get('/user/:userId', async (req, res) => {
             // Fetch the actual project details
             const projects = await Project.find({ '_id': { $in: projectIds } });
             
-            res.status(200).json(projects);
+            res.status(200).json({projects});
         } else {
             res.status(404).send({ error: 'User not found.' });
         }
