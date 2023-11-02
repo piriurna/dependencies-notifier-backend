@@ -83,7 +83,7 @@ router.get('/:projectId/dependencies', async (req, res) => {
 // Get all projects for a specific user
 router.get('/user/:userId', async (req, res) => {
     try {
-        const user = await User.findOne({ userId: req.params.userId }).populate('projects.dependency');
+        const user = await User.findOne({ userId: req.params.userId }).populate('projects.project');
         
         if (user) {
             // Get the IDs of all projects associated with this user
