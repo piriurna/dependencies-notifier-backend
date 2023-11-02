@@ -32,7 +32,7 @@ router.get('/:projectId', async (req, res) => {
     try {
         const project = await Project.findById(req.params.projectId).populate('dependencies.dependency');
         if (project) {
-            res.status(200).json({project});
+            res.status(200).json(project);
         } else {
             res.status(404).send({ error: 'Project not found.' });
         }
