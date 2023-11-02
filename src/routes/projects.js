@@ -87,7 +87,7 @@ router.get('/user/:userId', async (req, res) => {
         
         if (user) {
             // Get the IDs of all projects associated with this user
-            const projectIds = user.projects.map(proj => proj.dependency);
+            const projectIds = user.projects.map(proj => proj.project);
   
             // Fetch the actual project details
             const projects = await Project.find({ '_id': { $in: projectIds } });

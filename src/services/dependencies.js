@@ -30,37 +30,37 @@ async function checkAndUpdateLatestVersions() {
 }
 
 
-/**
- * Updates the project's dependencies and adds/updates them in the Dependency collection.
- * @param {String} projectId - The ID of the project.
- * @param {Array} dependencies - List of parsed dependencies from the project's dependencies.gradle.
- */
-async function updateProjectDependencies(projectId, dependencies) {
-  // Iterate over each dependency
-  for (let dep of dependencies) {
-      // Check if the dependency exists in the Dependency collection
-      let dependency = await Dependency.findOne({
-          group: dep.group,
-          name: dep.name
-      });
+    /**
+     * Updates the project's dependencies and adds/updates them in the Dependency collection.
+     * @param {String} projectId - The ID of the project.
+     * @param {Array} dependencies - List of parsed dependencies from the project's dependencies.gradle.
+     */
+    async function updateProjectDependencies(projectId, dependencies) {
+    // Iterate over each dependency
+    for (let dep of dependencies) {
+        // Check if the dependency exists in the Dependency collection
+        let dependency = await Dependency.findOne({
+            group: dep.group,
+            name: dep.name
+        });
 
-      // If it doesn't exist, add to Dependency collection
-      if (!dependency) {
-          dependency = new Dependency({
-              group: dep.group,
-              name: dep.name,
-              latestVersion: dep.version, // Temporarily set user's version as the latest. This should be updated from Maven or similar sources.
-              projectsInterested: [projectId]
-          });
-          await dependency.save();
-      } else {
-          // If the project isn't already associated with this dependency, add it
-          if (!dependency.projectsInterested.includes(projectId)) {
-              dependency.projectsInterested.push(projectId);
-              await dependency.save();
-          }
-      }
-  }
+        // If it doesn't exist, add to Dependency collection
+        if (!dependency) {
+            dependency = new Dependency({
+                group: dep.group,
+                name: dep.name,
+                latestVersion: dep.version, // Temporarily set user's version as the latest. This should be updated from Maven or similar sources.
+                projectsInterested: [projectId]
+            });
+            await dependency.save();
+        } else {
+            // If the project isn't already associated with this dependency, add it
+            if (!dependency.projectsInterested.includes(projectId)) {
+                dependency.projectsInterested.push(projectId);
+                await dependency.save();
+            }
+        }
+    }
 
   // Find the project and update its dependencies
   const project = await Project.findById(projectId);
