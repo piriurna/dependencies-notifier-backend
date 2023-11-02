@@ -63,7 +63,7 @@ router.post('/add-dependency-to-project', async (req, res) => {
         const { projectId, group, name, currentVersion } = req.body;
 
         // Validate the input
-        if (!projectId || !groupName || !currentVersion) {
+        if (!projectId || !group || !name || !currentVersion) {
             return res.status(400).send({ error: 'Missing required fields.' });
         }
 
