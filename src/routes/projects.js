@@ -16,7 +16,7 @@ router.post('/create', async (req, res) => {
         await newProject.save();
         
         // Add the new project reference to the user's projects list
-        user.projects.push({ dependency: newProject._id });
+        user.projects.push({ project: newProject._id });
         await user.save();
         
         res.status(201).json({ message: 'Project created successfully.', projectId: newProject._id });
@@ -32,7 +32,7 @@ router.get('/:projectId', async (req, res) => {
     try {
         const project = await Project.findById(req.params.projectId).populate('dependencies.dependency');
         if (project) {
-            res.status(200).json(project);
+            res.status(200).json({project});
         } else {
             res.status(404).send({ error: 'Project not found.' });
         }

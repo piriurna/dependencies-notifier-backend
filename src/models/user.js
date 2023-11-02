@@ -4,7 +4,7 @@ const userSchema = new Schema({
     userId: String, 
     fcmToken: String,
     projects: [{
-        dependency: {
+        project: {
             type: Schema.Types.ObjectId,
             ref: 'Project'
         }
