@@ -1,6 +1,7 @@
 const Dependency = require('../models/dependency');
 const User = require('../models/user');
 const axios = require('axios');
+const Project = require('../models/project');
 
 
 async function checkAndUpdateLatestVersions() {
