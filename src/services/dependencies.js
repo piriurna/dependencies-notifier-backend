@@ -91,8 +91,44 @@ async function getLatestVersionFromSource(group, name) {
   }
 }
 
+async function addOrUpdateDependency(projectId, group, name, currentVersion) {
+    // Check if the dependency already exists
+    let dependency = await Dependency.findOne({ group, name });
+    const latestVersion = await getLatestVersionFromSource(group, name);
+
+    if (dependency) {
+        // If the dependency exists, update the version if there's a newer version
+        if (latestVersion && isNewerVersion(dependency.latestVersion, latestVersion)) {
+            dependency.latestVersion = latestVersion;
+            await dependency.save();
+        }
+    } else {
+        // If the dependency doesn't exist, create a new one
+        const versionToUse = latestVersion || currentVersion;
+        dependency = new Dependency({
+            group: group,
+            name: name,
+            latestVersion: versionToUse,
+            projectsInterested: [projectId]
+        });
+        await dependency.save();
+    }
+
+    // Update the project's dependencies
+    const project = await Project.findById(projectId);
+    const projectDependency = {
+        dependency: dependency._id,
+        currentVersion: currentVersion
+    };
+    project.dependencies.push(projectDependency);
+    await project.save();
+
+    return dependency;
+}
+
 
 module.exports = {
+  addOrUpdateDependency,
   checkAndUpdateLatestVersions,
   updateProjectDependencies
 };

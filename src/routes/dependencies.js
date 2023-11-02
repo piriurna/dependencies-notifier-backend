@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { updateProjectDependencies, checkAndUpdateLatestVersions } = require('../services/dependencies');
+const { updateProjectDependencies, checkAndUpdateLatestVersions, addOrUpdateDependency } = require('../services/dependencies');
 const Project = require('../models/project');
 
 
@@ -58,5 +58,29 @@ router.post('/get-users', async (req, res) => {
   }
 });
 
+router.post('/add-dependency-to-project', async (req, res) => {
+    try {
+        const { projectId, group, name, currentVersion } = req.body;
+
+        // Validate the input
+        if (!projectId || !groupName || !currentVersion) {
+            return res.status(400).send({ error: 'Missing required fields.' });
+        }
+
+        // Find the project
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).send({ error: 'Project not found.' });
+        }
+
+        // Add or update the dependency
+        const dependency = await addOrUpdateDependency(projectId, group, name, currentVersion);
+
+        res.status(200).json(dependency);
+    } catch (error) {
+        console.error('Error adding dependency to project:', error);
+        res.status(500).send({ error: 'Failed to add dependency to project.', details: error.message });
+    }
+});
 
 module.exports = router;
